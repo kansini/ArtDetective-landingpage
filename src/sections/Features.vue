@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
-import { useLocaleStore } from '../composables/locale'
-import Icon from '../icons/Icon.vue'
-import { useGsapAnimations } from '../composables/useGsapAnimations'
+import {computed, ref, onMounted} from 'vue'
+import {useLocaleStore} from '../composables/locale'
+import {useGsapAnimations} from '../composables/useGsapAnimations'
+import FeatureIllustration from '../components/FeatureIllustration.vue'
 
 const locale = useLocaleStore()
 const t = computed(() => locale.messages.features)
 
-// 每个功能的图标 (inline SVG，24x24 viewBox)
+const root = ref<HTMLElement | null>(null)
+const {revealUp, revealStagger} = useGsapAnimations()
+
+// 6 个图标 (inline SVG, 24x24 viewBox)
 const icons = [
   // 碎片拾光: 拼图块
   `<path d="M4 5h6v3a2 2 0 0 0 4 0V5h6v6h-3a2 2 0 0 0 0 4h3v4h-6v-3a2 2 0 0 0-4 0v3H4v-4h3a2 2 0 0 0 0-4H4V5z"/>`,
@@ -23,14 +26,9 @@ const icons = [
   `<circle cx="12" cy="9" r="5"/><path d="M9 13l-2 7 5-3 5 3-2-7"/>`,
 ]
 
-const root = ref<HTMLElement | null>(null)
-const { revealUp, revealStagger } = useGsapAnimations()
-
 onMounted(() => {
-  // 标题 reveal
-  revealUp(root.value!.querySelector('.features__header'), {})
-  // 列表 stagger
-  revealStagger(root.value!, '.feature')
+  revealUp(root.value!.querySelector('.features__header') as Element, {})
+  revealStagger(root.value!, '.feature-card')
 })
 </script>
 
@@ -38,24 +36,34 @@ onMounted(() => {
   <section class="features" id="features" ref="root">
     <div class="container">
       <div class="features__header">
-        <p class="eyebrow">FEATURES · 06</p>
-        <h2 class="heading-section features__title">
-          <span>让艺术</span>
-          <span>触手可及。</span>
-        </h2>
+        <div class="features__head-text">
+          <h2 class="features__title">{{ t.title }}</h2>
+          <p class="features__subtitle">{{ t.subtitle }}</p>
+        </div>
+        <p class="features__eyebrow">{{ t.eyebrow }}</p>
       </div>
 
       <ul class="features__grid">
         <li
-          v-for="(item, i) in t.items"
-          :key="i"
-          class="feature"
+            v-for="(item, i) in t.items"
+            :key="i"
+            class="feature-card"
         >
-          <span class="feature__icon">
-            <Icon :size="32" v-html="icons[i]" />
-          </span>
-          <h3 class="feature__title">{{ item.title }}</h3>
-          <p class="feature__desc">{{ item.desc }}</p>
+          <div class="feature-card__body">
+            <span class="feature-card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
+                   stroke-linejoin="round" v-html="icons[i]"/>
+            </span>
+            <h3 class="feature-card__title">{{ item.title }}</h3>
+            <p class="feature-card__desc">{{ item.desc }}</p>
+            <a class="feature-card__more" href="#">
+              {{ t.more }}
+              <span class="feature-card__arrow" aria-hidden="true">→</span>
+            </a>
+          </div>
+          <div class="feature-card__visual">
+            <img :src="`./features/${i}.png`">
+          </div>
         </li>
       </ul>
     </div>
@@ -66,7 +74,7 @@ onMounted(() => {
 @use '../styles/tokens' as *;
 
 .features {
-  padding: $sp-32 0;
+  padding: $sp-32 0 $sp-24;
   background: $color-bg;
   position: relative;
 
@@ -75,21 +83,55 @@ onMounted(() => {
   }
 
   &__header {
-    text-align: center;
-    max-width: 640px;
-    margin: 0 auto $sp-16;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: $sp-8;
+    margin-bottom: $sp-16;
 
     @media (max-width: $bp-md) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $sp-4;
       margin-bottom: $sp-10;
     }
   }
 
-  &__title {
-    margin-top: $sp-4;
+  &__head-text {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    align-items: center;
+    gap: $sp-3;
+  }
+
+  &__title {
+    font-family: $font-serif;
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: $fw-medium;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: $color-ink;
+    margin: 0;
+  }
+
+  &__subtitle {
+    font-size: $fs-md;
+    color: $color-ink-soft;
+    margin: 0;
+  }
+
+  &__eyebrow {
+    font-family: $font-mono;
+    font-size: $fs-xs;
+    font-weight: $fw-regular;
+    letter-spacing: $ls-widest;
+    text-transform: uppercase;
+    color: $color-ink-muted;
+    margin: 0;
+    padding-bottom: $sp-3;
+
+    @media (max-width: $bp-md) {
+      padding-bottom: 0;
+    }
   }
 
   &__grid {
@@ -97,83 +139,116 @@ onMounted(() => {
     padding: 0;
     margin: 0;
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 0;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $sp-4;
 
     @media (max-width: $bp-lg) {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
     }
 
     @media (max-width: $bp-sm) {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr;
     }
   }
 }
 
-.feature {
+.feature-card {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: $sp-6 $sp-3;
-  border-left: 1px solid $color-line;
-  transition: background 0.4s $ease-out;
-
-  &:last-child {
-    border-right: 1px solid $color-line;
-  }
-
-  @media (max-width: $bp-lg) {
-    &:nth-child(3n) {
-      border-right: 1px solid $color-line;
-    }
-    &:nth-child(3n+1) {
-      border-left: 1px solid $color-line;
-    }
-    &:nth-child(n+4) {
-      border-top: 1px solid $color-line;
-    }
-  }
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  background: $color-surface;
+  border: 1px solid $color-line;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  min-height: 280px;
+  transition: transform 0.5s $ease-out, box-shadow 0.5s $ease-out, border-color 0.5s $ease-out;
 
   @media (max-width: $bp-sm) {
-    &:nth-child(odd) {
-      border-left: 1px solid $color-line;
-    }
-    &:nth-child(even) {
-      border-right: 1px solid $color-line;
-    }
-    &:nth-child(n+3) {
-      border-top: 1px solid $color-line;
-    }
+    min-height: 220px;
   }
 
   &:hover {
-    background: rgba(255, 255, 255, 0.5);
+    transform: translateY(-4px);
+    box-shadow: $shadow-hover;
+    border-color: rgba(26, 23, 20, 0.12);
+  }
+
+  // 文字占 1/2 (左)
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: $sp-3;
+    padding: $sp-6 $sp-5;
+    z-index: 1;
   }
 
   &__icon {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    width: 36px;
+    height: 36px;
     color: $color-ink;
-    margin-bottom: $sp-6;
+
+    svg {
+      width: 28px;
+      height: 28px;
+    }
   }
 
   &__title {
     font-family: $font-serif;
-    font-size: $fs-lg;
+    font-size: $fs-xl;
     font-weight: $fw-medium;
+    line-height: 1.2;
     color: $color-ink;
-    margin-bottom: $sp-3;
+    margin: 0;
     letter-spacing: 0;
   }
 
   &__desc {
     font-size: $fs-sm;
-    color: $color-ink-soft;
     line-height: 1.7;
+    color: $color-ink-soft;
     white-space: pre-line;
+    margin: 0;
+    flex: 1;
+  }
+
+  &__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: $fs-sm;
+    color: $color-ink;
+    margin-top: $sp-2;
+    transition: gap 0.3s $ease-out, color 0.3s $ease-out;
+
+    .feature-card__arrow {
+      transition: transform 0.3s $ease-out;
+    }
+
+    &:hover {
+      color: $color-accent-hover;
+      gap: 10px;
+
+      .feature-card__arrow {
+        transform: translateX(2px);
+      }
+    }
+  }
+
+  // 图占 1/2 (右)
+  &__visual {
+    position: relative;
+    overflow: hidden;
+    background: $color-bg-alt;
+
+    img {
+      height: 100%;
+      object-fit: cover;
+    }
   }
 }
 </style>

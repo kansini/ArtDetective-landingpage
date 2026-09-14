@@ -1,70 +1,74 @@
-import type {Locale} from './zh'
+import type { Locale } from './zh'
 
 export const en: Locale = {
-    nav: {
-        home: 'Home',
-        features: 'Features',
-        about: 'About',
-    },
+  nav: {
+    home: 'Home',
+    features: 'Features',
+    about: 'About',
+  },
 
-    hero: {
-        eyebrow: 'ART DETECTIVE',
-        title1: 'In the Paintings,',
-        title2: 'A Wider World.',
-        subtitle: 'Challenge the great works. Discover art as you play.',
-        cta: {
-            appStore: 'Download on App Store',
-            harmony: 'Get on HarmonyOS',
-        },
-        platformNote: {
-            ios: 'iPhone · iOS 26+',
-            harmony: 'HarmonyOS 6+',
-        },
-        cornerLabel: ['A SMALL STEP', 'A BRIGHTER WORLD'],
-        sideLabel: ['DISCOVER', 'EXPLORE', 'ENJOY', 'ART'],
-        pager: '01 / 03',
+  hero: {
+    eyebrow: 'ART MAKES\nLIFE BRIGHTER.',
+    title1: 'In the Paintings,',
+    title2: 'A Wider World.',
+    subtitle: 'Challenge the great works. Discover art as you play.',
+    extra: 'An art exploration app\nthemed around world-\nfamous paintings.\nBring art into your daily life.',
+    cta: {
+      appStore: 'Download on App Store',
+      harmony: 'Get on HarmonyOS',
     },
+    platformNote: {
+      ios: 'iPhone · iPad · iOS 17+',
+      harmony: 'HarmonyOS 4+',
+    },
+    sideLabel: ['DISCOVER', 'EXPLORE', 'ENJOY', 'ART'],
+    pager: '01 / 04',
+  },
 
-    features: {
-        items: [
-            {title: 'Fragments of Light', desc: 'Assemble the pieces\nrediscover a masterwork'},
-            {title: 'Light in the Dark', desc: 'Move the spotlight\nreveal hidden secrets'},
-            {title: 'Many Challenges', desc: 'Different ways to play\nkeeps curiosity alive'},
-            {title: 'Stories Behind', desc: 'History and detail\nof every painting'},
-            {title: 'My Gallery', desc: 'Collect each discovery\nbuild your own hall'},
-            {title: 'Medals of Art', desc: 'Complete challenges\nearn honor and merit'},
-        ],
-    },
+  features: {
+    eyebrow: 'FEATURES',
+    title: 'More ways to explore art',
+    subtitle: 'Many ways to play, new angles into the great works.',
+    more: 'Learn more',
+    items: [
+      { title: 'Fragments of Light', desc: 'Reassemble the whole\nfrom fragments and\nfind joy in every detail.' },
+      { title: 'Light in the Dark', desc: 'Reveal hidden details\nin paintings through\nlight and shadow.' },
+      { title: 'Many Challenges', desc: 'Word, puzzle, quiz…\nmore ways to play,\nconstantly updated.' },
+      { title: 'Stories Behind', desc: 'History, craft and\nfascinating details\nbehind the great works.' },
+      { title: 'My Gallery', desc: 'Collect every\ndiscovery and build\nyour own gallery.' },
+      { title: 'Medals of Art', desc: 'Complete challenges\nto unlock medals and\nrecord your growth.' },
+    ],
+  },
 
-    masterpiece: {
-        title1: 'Begin with One Painting,',
-        title2: 'See a Wider World.',
-        eyebrow: 'ART\nMAKES LIFE\nBRIGHTER.',
-        quote: 'I want to paint the air\nin which the light lingers.',
-        attribution: '— Claude Monet',
-    },
+  masterpiece: {
+    eyebrow: 'A SMALL STEP\nA BRIGHTER WORLD',
+    title1: 'Begin with One Painting,',
+    title2: 'See a Wider World.',
+    quote: 'I want to paint the air\nin which the light lingers.',
+    attribution: '— Claude Monet',
+  },
 
-    quote: {
-        text: 'Art makes the ordinary day\na little brighter.',
-        attribution: '— ART MAKES LIFE BRIGHTER.',
-    },
+  quote: {
+    text: 'Art makes the ordinary day\na little brighter.',
+    attribution: '— ART MAKES LIFE BRIGHTER.',
+  },
 
-    finalCta: {
-        appStore: 'Download on App Store',
-        harmony: 'Get on HarmonyOS',
-        platformNote: {
-            ios: 'iPhone · iOS 26+',
-            harmony: 'HarmonyOS 6+',
-        },
-        caption: 'Start your journey of art',
+  finalCta: {
+    appStore: 'Download on App Store',
+    harmony: 'Get on HarmonyOS',
+    platformNote: {
+      ios: 'iPhone · iPad · iOS 17+',
+      harmony: 'HarmonyOS 4+',
     },
+    caption: 'Start your journey of art',
+  },
 
-    footer: {
-        links: {
-            privacy: 'Privacy',
-            terms: 'Terms',
-            contact: 'Contact',
-        },
-        copyright: '© 2026 Art Detective. All rights reserved.',
+  footer: {
+    links: {
+      privacy: 'Privacy',
+      terms: 'Terms',
+      contact: 'Contact',
     },
+    copyright: '© 2026 Art Detective. All rights reserved.',
+  },
 }

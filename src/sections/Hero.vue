@@ -1,12 +1,71 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, onBeforeUnmount } from 'vue'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useLocaleStore } from '../composables/locale'
+import { playHeroIntro } from '../composables/useGsapAnimations'
 import Icon from '../icons/Icon.vue'
 import phoneHome from '../assets/phone-home.png'
 import phoneDetail from '../assets/phone-detail.png'
 
+gsap.registerPlugin(ScrollTrigger)
+
 const locale = useLocaleStore()
 const t = computed(() => locale.messages.hero)
+
+let heroScrollTrigger: ScrollTrigger | null = null
+
+onMounted(() => {
+  // 1) 入场动画 (load)
+  playHeroIntro()
+
+  // 2) 跟随页面滚动 — Apple 风格视差 + 缩入
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: '.hero',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: 0.6,
+    },
+  })
+
+  // 左文: 快速上移 + 淡出
+  tl.to('.hero__copy', { y: -120, autoAlpha: 0, ease: 'none' }, 0)
+  tl.to(
+    '.hero__cta-row, .hero__platform, .hero__divider',
+    { y: -80, autoAlpha: 0, ease: 'none' },
+    0,
+  )
+  tl.to('.hero__extra, .hero__divider--bottom', { autoAlpha: 0, y: -40, ease: 'none' }, 0.15)
+
+  // 前置 phone: 视差慢速 + 缩小
+  tl.to(
+    '.hero__phone--front',
+    { y: -180, scale: 0.82, ease: 'none' },
+    0,
+  )
+  // 后置 phone: 滚得更快 + 缩得更小
+  tl.to(
+    '.hero__phone--back',
+    { y: -280, scale: 0.65, ease: 'none' },
+    0,
+  )
+
+  // 右侧文字标签 + pager 淡出
+  tl.to(
+    ['.hero__side', '.hero__pager'],
+    { autoAlpha: 0, y: -40, ease: 'none' },
+    0.1,
+  )
+  // 整块 visual 容器淡出 (避免 phone 移走后留白)
+  tl.to('.hero__visual', { autoAlpha: 0, ease: 'none' }, 0.4)
+
+  heroScrollTrigger = tl.scrollTrigger ?? null
+})
+
+onBeforeUnmount(() => {
+  heroScrollTrigger?.kill()
+})
 </script>
 
 <template>
@@ -14,7 +73,7 @@ const t = computed(() => locale.messages.hero)
     <div class="hero__inner container">
       <!-- 左侧文字 -->
       <div class="hero__copy">
-        <p class="hero__eyebrow eyebrow">{{ t.eyebrow }}</p>
+        <p class="hero__eyebrow eyebrow" style="white-space: pre-line;">{{ t.eyebrow }}</p>
 
         <h1 class="hero__title">
           <span class="hero__title-line">{{ t.title1 }}</span>
@@ -28,7 +87,7 @@ const t = computed(() => locale.messages.hero)
         <div class="hero__cta-row">
           <a class="cta hero__cta" href="#" @click.prevent>
             <Icon :size="18">
-              <path d="M16.4 1.6c0 1.2-.5 2.4-1.4 3.2-.9.9-2 1.5-3.1 1.4-.1-1.2.4-2.4 1.3-3.2.9-.9 2.1-1.4 3.2-1.4zM20 17.3c-.6 1.3-.9 1.9-1.7 3.1-1.1 1.7-2.7 3.8-4.7 3.8-1.7 0-2.2-1.1-4.6-1.1-2.4 0-2.9 1.1-4.6 1.1-2 0-3.5-1.9-4.6-3.6C-.9 16.7-1.2 11.4.8 8.4c1.4-2.1 3.7-3.5 5.9-3.5 2.2 0 3.6 1.2 5.4 1.2 1.8 0 2.9-1.2 5.4-1.2 1.9 0 3.9 1 5.3 2.8-4.6 2.6-3.9 9.2-2.8 9.6z" />
+              <svg height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg"><path d="m15.5752 19.0792a4.2055 4.2055 0 0 0 -2.01 3.5376 4.0931 4.0931 0 0 0 2.4908 3.7542 9.7779 9.7779 0 0 1 -1.2755 2.6351c-.7941 1.1431-1.6244 2.2862-2.8878 2.2862s-1.5883-.734-3.0443-.734c-1.42 0-1.9252.7581-3.08.7581s-1.9611-1.0589-2.8876-2.3584a11.3987 11.3987 0 0 1 -1.9373-6.1487c0-3.61 2.3464-5.523 4.6566-5.523 1.2274 0 2.25.8062 3.02.8062.734 0 1.8771-.8543 3.2729-.8543a4.3778 4.3778 0 0 1 3.6822 1.841zm-6.8586-2.0456a1.3865 1.3865 0 0 1 -.2527-.024 1.6557 1.6557 0 0 1 -.0361-.337 4.0341 4.0341 0 0 1 1.0228-2.5148 4.1571 4.1571 0 0 1 2.7314-1.4078 1.7815 1.7815 0 0 1 .0361.373 4.1487 4.1487 0 0 1 -.9867 2.587 3.6039 3.6039 0 0 1 -2.5148 1.3236z"></path></svg>
             </Icon>
             <span>{{ t.cta.appStore }}</span>
           </a>
@@ -48,9 +107,9 @@ const t = computed(() => locale.messages.hero)
           <span>{{ t.platformNote.harmony }}</span>
         </p>
 
-        <p class="hero__corner-label">
-          <span v-for="line in t.cornerLabel" :key="line">{{ line }}</span>
-        </p>
+        <span class="hero__divider hero__divider--bottom" aria-hidden="true"></span>
+
+        <p class="hero__extra">{{ t.extra }}</p>
       </div>
 
       <!-- 右侧手机展示 -->
@@ -177,20 +236,17 @@ const t = computed(() => locale.messages.hero)
     }
   }
 
-  &__corner-label {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    font-family: $font-mono;
-    font-size: $fs-xs;
-    letter-spacing: $ls-widest;
-    color: $color-ink-muted;
-    margin-top: $sp-10;
-    text-transform: uppercase;
+  &__divider--bottom {
+    margin-top: $sp-6;
+  }
 
-    @media (max-width: $bp-md) {
-      margin-top: $sp-6;
-    }
+  &__extra {
+    font-size: $fs-sm;
+    color: $color-ink-soft;
+    line-height: 1.7;
+    max-width: 240px;
+    white-space: pre-line;
+    margin-top: $sp-2;
   }
 
   // --- 右侧 visual ---------------------

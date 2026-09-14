@@ -240,9 +240,9 @@ export function playHeroIntro() {
     0.85,
   )
   tl.fromTo(
-    '.hero__corner-label',
+    '.hero__extra',
     { autoAlpha: 0, y: 10 },
-    { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.06 },
+    { autoAlpha: 1, y: 0, duration: 0.6 },
     0.95,
   )
 
