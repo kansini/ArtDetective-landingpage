@@ -2,61 +2,62 @@
 // Design Tokens — 探画 Art Detective
 // 整体调性: 美术馆米白 + 衬线字体 + 克制留白
 // 参考: Apple Art Gallery / MoMA / Musée d'Orsay
+//
+// 颜色用 CSS variables 包装, 支持运行时切换 (light/dark)
 // ============================================================
 
-// --- 色板 -----------------------------------------------
-$color-bg: #F5F1EA; // 主背景 (米白)
-$color-bg-overlay: rgba(245, 241, 234, 0.5);
-$color-bg-alt: #EFE9DF; // 副背景 (略深米色)
-$color-bg-dark: #1F1B16; // 深色 section (footer 等)
-$color-surface: #FFFFFF; // 卡片
-$color-ink: #1A1714; // 主文字 (近黑)
-$color-ink-soft: #4A443E; // 副文字
-$color-ink-muted: #8A847C; // 弱化文字
-$color-line: #D9D2C5; // 分割线
-$color-accent: #1A1714; // CTA 按钮 (黑)
-$color-accent-hover: #3A332B;
-$color-gold: #B89968; // 强调金色 (装饰用)
+// --- 色板 (CSS vars, 主题切换) -----------------------------
+$color-bg:           var(--color-bg);           // 主背景
+$color-bg-alt:       var(--color-bg-alt);       // 副背景
+$color-bg-dark:      var(--color-bg-dark);      // 深色 section
+$color-surface:      var(--color-surface);      // 卡片
+$color-ink:          var(--color-ink);          // 主文字
+$color-ink-soft:     var(--color-ink-soft);     // 副文字
+$color-ink-muted:    var(--color-ink-muted);    // 弱化文字
+$color-line:         var(--color-line);         // 分割线
+$color-accent:       var(--color-accent);       // CTA 背景
+$color-accent-hover: var(--color-accent-hover); // CTA hover
+$color-gold:         var(--color-gold);         // 强调金色
 
 // --- 字体 -----------------------------------------------
 // 优先 Google Fonts，缺失时降级到系统字体
-$font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+$font-sans:  -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
 $font-serif: "Cormorant Garamond", "Noto Serif SC", "Songti SC", "Source Han Serif SC", "STSong", Georgia, "Times New Roman", serif;
-$font-mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+$font-mono:  "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
 
 // --- 字号 (Major Third 1.25) ---------------------------
-$fs-xs: 12px;
-$fs-sm: 14px;
+$fs-xs:   12px;
+$fs-sm:   14px;
 $fs-base: 16px;
-$fs-md: 18px;
-$fs-lg: 22px;
-$fs-xl: 28px;
-$fs-2xl: 36px;
-$fs-3xl: 48px;
-$fs-4xl: 64px;
-$fs-5xl: 88px;
+$fs-md:   18px;
+$fs-lg:   22px;
+$fs-xl:   28px;
+$fs-2xl:  36px;
+$fs-3xl:  48px;
+$fs-4xl:  64px;
+$fs-5xl:  88px;
 
 // --- 字重 / 字距 ---------------------------------------
-$fw-light: 300;
-$fw-regular: 400;
-$fw-medium: 500;
+$fw-light:    300;
+$fw-regular:  400;
+$fw-medium:   500;
 $fw-semibold: 600;
-$fw-bold: 700;
+$fw-bold:     700;
 
-$ls-tight: -0.02em;
-$ls-normal: 0;
-$ls-wide: 0.08em;
-$ls-wider: 0.18em;
-$ls-widest: 0.32em;
+$ls-tight:   -0.02em;
+$ls-normal:  0;
+$ls-wide:    0.08em;
+$ls-wider:   0.18em;
+$ls-widest:  0.32em;
 
 // --- 间距 (4px base) -----------------------------------
-$sp-1: 4px;
-$sp-2: 8px;
-$sp-3: 12px;
-$sp-4: 16px;
-$sp-5: 20px;
-$sp-6: 24px;
-$sp-8: 32px;
+$sp-1:  4px;
+$sp-2:  8px;
+$sp-3:  12px;
+$sp-4:  16px;
+$sp-5:  20px;
+$sp-6:  24px;
+$sp-8:  32px;
 $sp-10: 40px;
 $sp-12: 48px;
 $sp-16: 64px;
@@ -66,13 +67,13 @@ $sp-32: 128px;
 $sp-40: 160px;
 
 // --- 圆角 / 阴影 ---------------------------------------
-$radius-sm: 8px;
-$radius-md: 16px;
-$radius-lg: 24px;
+$radius-sm:   8px;
+$radius-md:   16px;
+$radius-lg:   24px;
 $radius-pill: 999px;
 
-$shadow-soft: 0 8px 32px rgba(26, 23, 20, 0.06);
-$shadow-hover: 0 12px 40px rgba(26, 23, 20, 0.10);
+$shadow-soft:  0 8px 32px rgba(0, 0, 0, 0.06);
+$shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.10);
 
 // --- 断点 ----------------------------------------------
 $bp-sm: 640px;
@@ -83,9 +84,9 @@ $bp-2xl: 1440px;
 
 // --- 布局 ----------------------------------------------
 $container-max: 1200px;
-$nav-height: 72px;
+$nav-height:    72px;
 
 // --- 缓动 (GSAP/CSS) -----------------------------------
-$ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+$ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
 $ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-$ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+$ease-soft:   cubic-bezier(0.4, 0, 0.2, 1);

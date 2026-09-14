@@ -15,7 +15,7 @@ export const en: Locale = {
     extra: 'An art exploration app\nthemed around world-\nfamous paintings.\nBring art into your daily life.',
     cta: {
       appStore: 'Download on App Store',
-      harmony: 'Get on HarmonyOS',
+      harmony: 'Get on AppGallery',
     },
     platformNote: {
       ios: 'iPhone · iOS 26+',
@@ -55,7 +55,7 @@ export const en: Locale = {
 
   finalCta: {
     appStore: 'Download on App Store',
-    harmony: 'Get on HarmonyOS',
+    harmony: 'Get on AppGallery',
     platformNote: {
       ios: 'iPhone · iOS 26+',
       harmony: 'HarmonyOS 6+',

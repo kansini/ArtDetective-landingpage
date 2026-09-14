@@ -201,7 +201,7 @@ watch(
     width: 168px;
     height: 168px;
     padding: 8px;
-    background: #fff;
+    background: var(--color-surface);
     border-radius: $radius-sm;
     border: 1px solid rgba(26, 23, 20, 0.06);
     display: flex;

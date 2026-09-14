@@ -15,7 +15,7 @@ export const zh = {
     extra: '一款以世界名画为主题的\n艺术探索 App，\n让艺术走进你的日常。',
     cta: {
       appStore: 'App Store 下载',
-      harmony: 'HarmonyOS 下载',
+      harmony: 'AppGallery 下载',
     },
     platformNote: {
       ios: 'iPhone · iOS 26+',
@@ -59,7 +59,7 @@ export const zh = {
   // Final CTA
   finalCta: {
     appStore: 'App Store 下载',
-    harmony: 'HarmonyOS 下载',
+    harmony: 'AppGallery 下载',
     platformNote: {
       ios: 'iPhone · iOS 26+',
       harmony: 'HarmonyOS 6+',

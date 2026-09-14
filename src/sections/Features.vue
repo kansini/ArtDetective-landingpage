@@ -337,7 +337,7 @@ onBeforeUnmount(() => {
   &:hover {
     transform: translateY(-4px);
     box-shadow: $shadow-hover;
-    border-color: rgba(26, 23, 20, 0.12);
+    border-color: var(--color-ink-soft);
   }
 
   &__body {

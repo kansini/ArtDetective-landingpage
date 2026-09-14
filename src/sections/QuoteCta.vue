@@ -5,6 +5,7 @@ import { useGsapAnimations } from '../composables/useGsapAnimations'
 import QrPopover from '../components/QrPopover.vue'
 import qrApple from '../assets/qr-apple.png'
 import qrHm from '../assets/qr-hm.png'
+import harmonyIcon from '../assets/harmony-icon.svg'
 
 const locale = useLocaleStore()
 const t = computed(() => {
@@ -46,8 +47,8 @@ onMounted(() => {
             data-qr-trigger
             @click="showApple = !showApple; showHarmony = false"
           >
-            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke-width="1.4" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="m15.5752 19.0792a4.2055 4.2055 0 0 0 -2.01 3.5376 4.0931 4.0931 0 0 0 2.4908 3.7542 9.7779 9.7779 0 0 1 -1.2755 2.6351c-.7941 1.1431-1.6244 2.2862-2.8878 2.2862s-1.5883-.734-3.0443-.734c-1.42 0-1.9252.7581-3.08.7581s-1.9611-1.0589-2.8876-2.3584a11.3987 11.3987 0 0 1 -1.9373-6.1487c0-3.61 2.3464-5.523 4.6566-5.523 1.2274 0 2.25.8062 3.02.8062.734 0 1.8771-.8543 3.2729-.8543a4.3778 4.3778 0 0 1 3.6822 1.841zm-6.8586-2.0456a1.3865 1.3865 0 0 1 -.2527-.024 1.6557 1.6557 0 0 1 -.0361-.337 4.0341 4.0341 0 0 1 1.0228-2.5148 4.1571 4.1571 0 0 1 2.7314-1.4078 1.7815 1.7815 0 0 1 .0361.373 4.1487 4.1487 0 0 1 -.9867 2.587 3.6039 3.6039 0 0 1 -2.5148 1.3236z" />
+            <svg viewBox="0 0 384 512" fill="currentColor" aria-hidden="true">
+              <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
             </svg>
             <span>{{ t.finalCta.appStore }}</span>
           </button>
@@ -58,11 +59,7 @@ onMounted(() => {
             data-qr-trigger
             @click="showHarmony = !showHarmony; showApple = false"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.4" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5" />
-              <path d="M2 12l10 5 10-5" />
-            </svg>
+            <img :src="harmonyIcon" alt="" class="cta-icon-img" />
             <span>{{ t.finalCta.harmony }}</span>
           </button>
 

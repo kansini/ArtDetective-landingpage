@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
 import { useLocaleStore } from '../composables/locale'
+import { useThemeStore } from '../composables/theme'
 
 const locale = useLocaleStore()
+const theme = useThemeStore()
 const t = computed(() => locale.messages.nav)
 
 const scrolled = ref(false)
@@ -174,6 +176,22 @@ onBeforeUnmount(() => {
 
       <div class="nav__right">
         <button
+          class="theme-toggle"
+          :aria-label="`Switch to ${theme.resolved === 'dark' ? 'light' : 'dark'} mode`"
+          @click="theme.toggle()"
+        >
+          <!-- moon (light mode → show moon to switch to dark) -->
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+          <!-- sun (dark mode → show sun to switch to light) -->
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+          </svg>
+        </button>
+
+        <button
           class="nav__lang"
           :aria-label="`Switch to ${locale.code === 'zh' ? 'English' : '中文'}`"
           @click="locale.toggle()"
@@ -236,13 +254,13 @@ onBeforeUnmount(() => {
 
   &--scrolled,
   &--open {
-    background: rgba(245, 241, 234, 0.92);
+    background: var(--nav-glass-bg);
     backdrop-filter: saturate(160%) blur(16px);
     -webkit-backdrop-filter: saturate(160%) blur(16px);
   }
 
   &--scrolled {
-    box-shadow: 0 1px 0 rgba(26, 23, 20, 0.04);
+    box-shadow: var(--nav-glass-shadow);
   }
 
   &__inner {
@@ -410,7 +428,7 @@ onBeforeUnmount(() => {
     left: 0;
     right: 0;
     bottom: 0;
-    background: $color-bg-overlay;
+    background: var(--nav-glass-bg);
     backdrop-filter: blur(16px);
     z-index: 99;
     display: flex;
@@ -455,7 +473,7 @@ onBeforeUnmount(() => {
     }
 
     &:active {
-      background: rgba(26, 23, 20, 0.03);
+      background: var(--color-bg-alt);
     }
 
     &:last-child {

@@ -1,6 +1,51 @@
 @use './tokens' as *;
 
 // ============================================================
+// 主题系统 — CSS variables 切换
+// ============================================================
+
+// --- 浅色 (默认) ---------------------------------------
+:root,
+:root[data-theme='light'] {
+  --color-bg:           #F5F1EA; // 米白
+  --color-bg-alt:       #EFE9DF; // 略深米色
+  --color-bg-dark:      #1F1B16; // 深色 section
+  --color-surface:      #FFFFFF; // 卡片
+  --color-ink:          #1A1714; // 近黑
+  --color-ink-soft:     #4A443E;
+  --color-ink-muted:    #8A847C;
+  --color-line:         #D9D2C5;
+  --color-accent:       #1A1714;
+  --color-accent-hover: #3A332B;
+  --color-gold:         #B89968;
+
+  // 主题专属: 毛玻璃 navbar 背景
+  --nav-glass-bg: rgba(245, 241, 234, 0.82);
+  --nav-glass-shadow: 0 1px 0 rgba(26, 23, 20, 0.04);
+
+  // 主题专属: 主题切换过渡遮罩
+  --theme-transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+}
+
+// --- 深色 -----------------------------------------------
+:root[data-theme='dark'] {
+  --color-bg:           #0F0D0A; // 深棕黑
+  --color-bg-alt:       #1A1612;
+  --color-bg-dark:      #050402;
+  --color-surface:      #1F1B17; // 卡片
+  --color-ink:          #F5F1EA; // 米白
+  --color-ink-soft:     #B8B0A4;
+  --color-ink-muted:    #7A746C;
+  --color-line:         #2A2520;
+  --color-accent:       #F5F1EA; // 反转: 米白背景
+  --color-accent-hover: #D9D2C5;
+  --color-gold:         #D9B47A;
+
+  --nav-glass-bg: rgba(15, 13, 10, 0.78);
+  --nav-glass-shadow: 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+// ============================================================
 // 全局样式
 // ============================================================
 
@@ -10,17 +55,13 @@
   box-sizing: border-box;
 }
 
-iframe {
-  width: 0;
-  height: 0;
-  display: none;
-}
-
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
   // GSAP 滚动动画平滑
   overflow-x: hidden;
+  // 主题切换平滑
+  transition: var(--theme-transition);
 }
 
 body {
@@ -35,14 +76,16 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
-  // iOS 防止橡皮筋导致横向 scroll
   overscroll-behavior-x: none;
+  transition: var(--theme-transition);
 }
 
 #app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: $color-bg;
+  transition: var(--theme-transition);
 }
 
 // --- 排版 -----------------------------------------------
@@ -53,10 +96,12 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0;
   line-height: 1.15;
   letter-spacing: $ls-tight;
+  transition: color 0.4s ease;
 }
 
 p {
   margin: 0;
+  transition: color 0.4s ease;
 }
 
 a {
@@ -97,6 +142,7 @@ button {
   letter-spacing: $ls-widest;
   text-transform: uppercase;
   color: $color-ink-muted;
+  transition: color 0.4s ease;
 }
 
 .serif {
@@ -137,10 +183,9 @@ button {
   font-size: $fs-sm;
   font-weight: $fw-medium;
   letter-spacing: $ls-wide;
-  transition: background 0.3s $ease-out, transform 0.3s $ease-out, box-shadow 0.3s $ease-out;
+  transition: background 0.3s $ease-out, color 0.3s $ease-out, transform 0.3s $ease-out, box-shadow 0.3s $ease-out;
   cursor: pointer;
   white-space: nowrap;
-  // 触摸目标至少 44px (Apple HIG)
   min-height: 44px;
 
   &:hover {
@@ -158,20 +203,37 @@ button {
     height: 18px;
     flex-shrink: 0;
   }
+
+  // 强制按钮内 svg 尺寸统一 (避免某些 svg 撑高按钮)
+  > svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  // 按钮内 img (鸿蒙彩色 logo 等)
+  > img {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    object-fit: contain;
+  }
 }
 
-// --- CTA 按钮行 (统一 Hero / QuoteCta 移动端) -------
+// --- CTA 按钮行 (统一 Hero / QuoteCta 桌面+移动) -------
 .cta-row {
   position: relative;
   display: flex;
-  gap: $sp-3;
+  gap: $sp-3; // 桌面 12px 间隙
   flex-wrap: wrap;
+  align-items: center;
   margin-top: $sp-4;
 
-  @media (max-width: $bp-sm) {
+  @media (max-width: $bp_sm) {
     flex-direction: column;
     align-items: stretch;
     width: 100%;
+    gap: $sp-3;
 
     .cta {
       justify-content: center;
@@ -192,7 +254,51 @@ button {
   }
 }
 
-// --- 滚动条 (克制) -------------------------------------
+// --- 主题切换按钮 -------------------------------------
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: $color-ink-soft;
+  transition: color 0.3s $ease-out, background 0.3s $ease-out, transform 0.3s $ease-out;
+  position: relative;
+
+  &:hover {
+    color: $color-ink;
+    background: $color-bg-alt;
+  }
+
+  &:active {
+    transform: scale(0.92);
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .icon-sun,
+  .icon-moon {
+    transition: transform 0.4s $ease-out, opacity 0.3s $ease-out;
+  }
+
+  .icon-sun {
+    display: none;
+  }
+  .icon-moon {
+    display: block;
+  }
+
+  [data-theme='dark'] & {
+    .icon-sun { display: block; }
+    .icon-moon { display: none; }
+  }
+}
+
+// --- 滚动条 -------------------------------------------
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -200,15 +306,28 @@ button {
 
 ::-webkit-scrollbar-track {
   background: $color-bg;
+  transition: background 0.4s ease;
 }
 
 ::-webkit-scrollbar-thumb {
   background: $color-line;
   border-radius: $radius-pill;
+  transition: background 0.3s $ease-out;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: $color-ink-muted;
+}
+
+// --- 选中 ---------------------------------------------
+::selection {
+  background: rgba(26, 23, 20, 0.85);
+  color: $color-bg;
+}
+
+[data-theme='dark'] ::selection {
+  background: rgba(245, 241, 234, 0.9);
+  color: $color-bg;
 }
 
 // --- 减少动画 -----------------------------------------
