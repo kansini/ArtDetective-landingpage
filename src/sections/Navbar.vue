@@ -197,24 +197,26 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <!-- 移动菜单 (全屏抽屉) -->
-    <Transition name="drawer">
-      <div v-if="mobileOpen" class="nav__drawer" @click.self="closeMobile">
-        <nav class="nav__drawer-menu" aria-label="Mobile">
-          <a
-            v-for="(label, key) in t"
-            :key="key"
-            :href="`#${key}`"
-            class="nav__drawer-link"
-            :class="{ 'nav__drawer-link--active': active === key }"
-            @click.prevent="setActiveAndScroll(key)"
-          >
-            <span class="nav__drawer-link-text">{{ label }}</span>
-            <span class="nav__drawer-link-num">{{ String(navOrder.indexOf(key as any) + 1).padStart(2, '0') }}</span>
-          </a>
-        </nav>
-      </div>
-    </Transition>
+    <!-- 移动菜单 (全屏抽屉) - Teleport 到 body 避免 backdrop-filter 影响 -->
+    <Teleport to="body">
+      <Transition name="drawer">
+        <div v-if="mobileOpen" class="nav__drawer" @click.self="closeMobile">
+          <nav class="nav__drawer-menu" aria-label="Mobile">
+            <a
+              v-for="(label, key) in t"
+              :key="key"
+              :href="`#${key}`"
+              class="nav__drawer-link"
+              :class="{ 'nav__drawer-link--active': active === key }"
+              @click.prevent="setActiveAndScroll(key)"
+            >
+              <span class="nav__drawer-link-text">{{ label }}</span>
+              <span class="nav__drawer-link-num">{{ String(navOrder.indexOf(key as any) + 1).padStart(2, '0') }}</span>
+            </a>
+          </nav>
+        </div>
+      </Transition>
+    </Teleport>
   </header>
 </template>
 
@@ -408,31 +410,32 @@ onBeforeUnmount(() => {
     left: 0;
     right: 0;
     bottom: 0;
-    background: $color-bg;
+    background: $color-bg-overlay;
+    backdrop-filter: blur(16px);
     z-index: 99;
     display: flex;
     flex-direction: column;
-    padding: $sp-12 $sp-8;
-    overflow-y: auto;
+    padding: 0;
+    overflow: hidden;
   }
 
   &__drawer-menu {
     display: flex;
     flex-direction: column;
-    gap: $sp-1;
+    // 3 个 item 平分整个 drawer 高度
   }
 
   &__drawer-link {
+    flex: 1;  // 平分 drawer 高度
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: $sp-5 $sp-3;
+    padding: $sp-5 $sp-8;
     font-family: $font-serif;
     font-size: 32px;
     font-weight: $fw-medium;
     color: $color-ink-soft;
     border-bottom: 1px solid $color-line;
-    min-height: 64px;
     transition: color 0.3s $ease-out, padding-left 0.3s $ease-out;
 
     &-text {
@@ -448,11 +451,15 @@ onBeforeUnmount(() => {
 
     &--active {
       color: $color-ink;
-      padding-left: $sp-5;
+      padding-left: $sp-10;
     }
 
     &:active {
       background: rgba(26, 23, 20, 0.03);
+    }
+
+    &:last-child {
+      border-bottom: 0;
     }
   }
 }
