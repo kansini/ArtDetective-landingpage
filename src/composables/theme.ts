@@ -12,7 +12,7 @@ function getInitialMode(): ThemeMode {
   } catch {
     // ignore
   }
-  return 'auto'
+  return 'dark' // 默认深色
 }
 
 function resolveTheme(mode: ThemeMode): 'light' | 'dark' {

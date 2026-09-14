@@ -4,30 +4,8 @@
 // 主题系统 — CSS variables 切换
 // ============================================================
 
-// --- 浅色 (默认) ---------------------------------------
+// --- 深色 (默认) ---------------------------------------
 :root,
-:root[data-theme='light'] {
-  --color-bg:           #F5F1EA; // 米白
-  --color-bg-alt:       #EFE9DF; // 略深米色
-  --color-bg-dark:      #1F1B16; // 深色 section
-  --color-surface:      #FFFFFF; // 卡片
-  --color-ink:          #1A1714; // 近黑
-  --color-ink-soft:     #4A443E;
-  --color-ink-muted:    #8A847C;
-  --color-line:         #D9D2C5;
-  --color-accent:       #1A1714;
-  --color-accent-hover: #3A332B;
-  --color-gold:         #B89968;
-
-  // 主题专属: 毛玻璃 navbar 背景
-  --nav-glass-bg: rgba(245, 241, 234, 0.82);
-  --nav-glass-shadow: 0 1px 0 rgba(26, 23, 20, 0.04);
-
-  // 主题专属: 主题切换过渡遮罩
-  --theme-transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
-}
-
-// --- 深色 -----------------------------------------------
 :root[data-theme='dark'] {
   --color-bg:           #0F0D0A; // 深棕黑
   --color-bg-alt:       #1A1612;
@@ -43,6 +21,26 @@
 
   --nav-glass-bg: rgba(15, 13, 10, 0.78);
   --nav-glass-shadow: 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  --theme-transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+}
+
+// --- 浅色 -----------------------------------------------
+:root[data-theme='light'] {
+  --color-bg:           #F5F1EA;
+  --color-bg-alt:       #EFE9DF;
+  --color-bg-dark:      #1F1B16;
+  --color-surface:      #FFFFFF;
+  --color-ink:          #1A1714;
+  --color-ink-soft:     #4A443E;
+  --color-ink-muted:    #8A847C;
+  --color-line:         #D9D2C5;
+  --color-accent:       #1A1714;
+  --color-accent-hover: #3A332B;
+  --color-gold:         #B89968;
+
+  --nav-glass-bg: rgba(245, 241, 234, 0.82);
+  --nav-glass-shadow: 0 1px 0 rgba(26, 23, 20, 0.04);
 }
 
 // ============================================================

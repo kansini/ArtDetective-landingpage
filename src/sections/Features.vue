@@ -318,7 +318,7 @@ onBeforeUnmount(() => {
   grid-template-columns: 1fr 1fr;
   gap: 0;
   background: $color-surface;
-  border: 1px solid $color-line;
+  //border: 1px solid $color-line;
   border-radius: $radius-lg;
   overflow: hidden;
   min-height: 280px;
