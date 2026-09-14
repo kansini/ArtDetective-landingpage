@@ -2,7 +2,6 @@
 import {computed, ref, onMounted} from 'vue'
 import {useLocaleStore} from '../composables/locale'
 import {useGsapAnimations} from '../composables/useGsapAnimations'
-import FeatureIllustration from '../components/FeatureIllustration.vue'
 
 const locale = useLocaleStore()
 const t = computed(() => locale.messages.features)
@@ -62,7 +61,7 @@ onMounted(() => {
             </a>
           </div>
           <div class="feature-card__visual">
-            <img :src="`./features/${i}.png`">
+            <img :src="`./features/${i}.png`" alt="">
           </div>
         </li>
       </ul>
