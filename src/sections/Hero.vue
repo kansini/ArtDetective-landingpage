@@ -150,10 +150,10 @@ onBeforeUnmount(() => {
       <!-- 右侧手机展示 -->
       <div class="hero__visual">
         <div class="hero__phone hero__phone--back">
-          <img :src="phoneDetail" alt="Art Detective — Artwork Story" />
+          <img :src="phoneHome" alt="Art Detective — Artwork Story" />
         </div>
         <div class="hero__phone hero__phone--front">
-          <img :src="phoneHome" alt="Art Detective — Daily Masterpiece" />
+          <img :src="phoneDetail" alt="Art Detective — Daily Masterpiece" />
         </div>
 
         <div class="hero__side" aria-hidden="true">
@@ -300,8 +300,8 @@ onBeforeUnmount(() => {
 
   &__phone {
     position: absolute;
-    width: 56%;
-    max-width: 320px;
+    width: 100%;
+    max-width: 360px;
     display: block;
     will-change: transform;
 
