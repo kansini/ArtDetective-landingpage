@@ -7,17 +7,17 @@
 // --- 深色 (默认) ---------------------------------------
 :root,
 :root[data-theme='dark'] {
-  --color-bg:           #0F0D0A; // 深棕黑
-  --color-bg-alt:       #1A1612;
-  --color-bg-dark:      #050402;
-  --color-surface:      #1F1B17; // 卡片
-  --color-ink:          #F5F1EA; // 米白
-  --color-ink-soft:     #B8B0A4;
-  --color-ink-muted:    #7A746C;
-  --color-line:         #2A2520;
-  --color-accent:       #F5F1EA; // 反转: 米白背景
+  --color-bg: #0F0D0A; // 深棕黑
+  --color-bg-alt: #1A1612;
+  --color-bg-dark: #050402;
+  --color-surface: #1F1B17; // 卡片
+  --color-ink: #F5F1EA; // 米白
+  --color-ink-soft: #B8B0A4;
+  --color-ink-muted: #7A746C;
+  --color-line: #2A2520;
+  --color-accent: #F5F1EA; // 反转: 米白背景
   --color-accent-hover: #D9D2C5;
-  --color-gold:         #D9B47A;
+  --color-gold: #D9B47A;
 
   --nav-glass-bg: rgba(15, 13, 10, 0.78);
   --nav-glass-shadow: 0 1px 0 rgba(255, 255, 255, 0.04);
@@ -27,17 +27,17 @@
 
 // --- 浅色 -----------------------------------------------
 :root[data-theme='light'] {
-  --color-bg:           #F5F1EA;
-  --color-bg-alt:       #EFE9DF;
-  --color-bg-dark:      #1F1B16;
-  --color-surface:      #FFFFFF;
-  --color-ink:          #1A1714;
-  --color-ink-soft:     #4A443E;
-  --color-ink-muted:    #8A847C;
-  --color-line:         #D9D2C5;
-  --color-accent:       #1A1714;
+  --color-bg: #F5F1EA;
+  --color-bg-alt: #EFE9DF;
+  --color-bg-dark: #1F1B16;
+  --color-surface: #FFFFFF;
+  --color-ink: #1A1714;
+  --color-ink-soft: #4A443E;
+  --color-ink-muted: #8A847C;
+  --color-line: #D9D2C5;
+  --color-accent: #1A1714;
   --color-accent-hover: #3A332B;
-  --color-gold:         #B89968;
+  --color-gold: #B89968;
 
   --nav-glass-bg: rgba(245, 241, 234, 0.82);
   --nav-glass-shadow: 0 1px 0 rgba(26, 23, 20, 0.04);
@@ -51,6 +51,12 @@
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+iframe {
+  width: 0;
+  height: 0;
+  display: none;
 }
 
 html {
@@ -286,13 +292,19 @@ button {
   .icon-sun {
     display: none;
   }
+
   .icon-moon {
     display: block;
   }
 
   [data-theme='dark'] & {
-    .icon-sun { display: block; }
-    .icon-moon { display: none; }
+    .icon-sun {
+      display: block;
+    }
+
+    .icon-moon {
+      display: none;
+    }
   }
 }
 
