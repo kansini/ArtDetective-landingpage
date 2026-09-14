@@ -91,7 +91,7 @@ onBeforeUnmount(() => {
 
         <span class="hero__divider" aria-hidden="true"></span>
 
-        <div class="hero__cta-row">
+        <div class="hero__cta-row cta-row">
           <button
             ref="appleBtn"
             class="cta hero__cta"
@@ -199,8 +199,8 @@ onBeforeUnmount(() => {
 
     @media (max-width: $bp-md) {
       grid-template-columns: 1fr;
-      gap: $sp-12;
-      padding-top: $sp-8;
+      gap: $sp-10;
+      padding-top: $sp-4;
     }
   }
 
@@ -209,6 +209,12 @@ onBeforeUnmount(() => {
     flex-direction: column;
     gap: $sp-6;
     max-width: 520px;
+
+    @media (max-width: $bp-md) {
+      gap: $sp-4;
+      max-width: 100%;
+      text-align: left;
+    }
   }
 
   &__eyebrow {
@@ -217,7 +223,7 @@ onBeforeUnmount(() => {
 
   &__title {
     font-family: $font-serif;
-    font-size: clamp(40px, 5.6vw, 76px);
+    font-size: clamp(36px, 5.6vw, 76px);
     line-height: 1.08;
     letter-spacing: -0.025em;
     color: $color-ink;
@@ -249,11 +255,7 @@ onBeforeUnmount(() => {
   }
 
   &__cta-row {
-    position: relative;
-    display: flex;
-    gap: $sp-3;
-    flex-wrap: wrap;
-    margin-top: $sp-4;
+    // 移动端布局统一由 .cta-row 全局类处理
   }
 
   &__cta {
@@ -289,6 +291,10 @@ onBeforeUnmount(() => {
     max-width: 240px;
     white-space: pre-line;
     margin-top: $sp-2;
+
+    @media (max-width: $bp-md) {
+      max-width: 100%;
+    }
   }
 
   // --- 右侧 visual ---------------------
@@ -300,7 +306,12 @@ onBeforeUnmount(() => {
     min-height: 560px;
 
     @media (max-width: $bp-md) {
-      min-height: 480px;
+      min-height: 380px;
+      order: 2;
+    }
+
+    @media (max-width: $bp-sm) {
+      min-height: 320px;
     }
   }
 
@@ -310,6 +321,10 @@ onBeforeUnmount(() => {
     max-width: 360px;
     display: block;
     will-change: transform;
+
+    @media (max-width: $bp-sm) {
+      max-width: 240px;
+    }
 
     img {
       width: 100%;

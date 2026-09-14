@@ -38,7 +38,7 @@ onMounted(() => {
       </figure>
 
       <div class="quote-cta__actions">
-        <div class="quote-cta__btn-row">
+        <div class="quote-cta__btn-row cta-row">
           <button
             ref="appleBtn"
             class="cta quote-cta__btn"
@@ -141,7 +141,7 @@ onMounted(() => {
 
   &__quote {
     font-family: $font-serif;
-    font-size: clamp(24px, 2.4vw, 32px);
+    font-size: clamp(22px, 2.4vw, 32px);
     line-height: 1.5;
     color: $color-ink;
     margin: 0 0 $sp-5;
@@ -173,10 +173,8 @@ onMounted(() => {
   }
 
   &__btn-row {
-    position: relative;
-    display: flex;
-    gap: $sp-3;
-    flex-wrap: wrap;
+    // 移动端布局统一由 .cta-row 全局类处理
+    margin-top: 0;
   }
 
   &__platform {

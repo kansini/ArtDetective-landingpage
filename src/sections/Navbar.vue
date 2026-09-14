@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { computed, ref, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
 import { useLocaleStore } from '../composables/locale'
-import Icon from '../icons/Icon.vue'
 
 const locale = useLocaleStore()
 const t = computed(() => locale.messages.nav)
 
 const scrolled = ref(false)
 const active = ref<'home' | 'features' | 'about'>('home')
+const mobileOpen = ref(false)
 const menuRef = ref<HTMLElement | null>(null)
 const indicatorRef = ref<HTMLElement | null>(null)
 let resizeObserver: ResizeObserver | null = null
@@ -15,7 +15,6 @@ let intersectionObserver: IntersectionObserver | null = null
 let isClickScrolling = false
 let clickScrollTimer: number | null = null
 
-// 导航顺序 (与 section id 对应)
 const navOrder: Array<'home' | 'features' | 'about'> = ['home', 'features', 'about']
 
 function getLinks(): HTMLElement[] {
@@ -44,7 +43,6 @@ function updateIndicator(immediate = false) {
     indicator.style.transition = 'none'
     indicator.style.width = `${width}px`
     indicator.style.transform = `translateX(${left}px)`
-    // 强制 reflow
     void indicator.offsetWidth
     indicator.style.transition = prevTransition
   } else {
@@ -53,16 +51,19 @@ function updateIndicator(immediate = false) {
   }
 }
 
+function closeMobile() {
+  mobileOpen.value = false
+}
+
 function setActiveAndScroll(id: string) {
   const key = id as 'home' | 'features' | 'about'
   active.value = key
-  // 立即更新 indicator
+  closeMobile()
   nextTick(() => updateIndicator())
 
   const el = document.getElementById(id)
   if (!el) return
 
-  // 标记点击滚动, 避免 IntersectionObserver 立即覆盖
   isClickScrolling = true
   if (clickScrollTimer) window.clearTimeout(clickScrollTimer)
   clickScrollTimer = window.setTimeout(() => {
@@ -75,40 +76,45 @@ function setActiveAndScroll(id: string) {
 function onScroll() {
   scrolled.value = window.scrollY > 24
 }
-
 function onResize() {
+  // 桌面 → 移动断点切换时关闭菜单
+  if (window.innerWidth > 768 && mobileOpen.value) {
+    closeMobile()
+  }
   updateIndicator()
+}
+
+// 桌面菜单 DOM 变化时重算 (toggle mobileOpen 不影响桌面 indicator)
+watch(mobileOpen, (open) => {
+  if (!open) return
+  // 打开时锁滚动
+  document.body.style.overflow = 'hidden'
+})
+function onKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape' && mobileOpen.value) closeMobile()
 }
 
 onMounted(() => {
   window.addEventListener('scroll', onScroll, { passive: true })
   window.addEventListener('resize', onResize)
+  document.addEventListener('keydown', onKeydown)
   onScroll()
 
-  // 初次定位 (等 DOM + 字体就绪)
-  nextTick(() => {
-    // 双 nextTick 确保 v-for 已经渲染
-    nextTick(() => updateIndicator(true))
-  })
+  nextTick(() => nextTick(() => updateIndicator(true)))
 
-  // 字体加载完成后重定位
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(() => updateIndicator(true))
   }
 
-  // 监听 nav menu 容器尺寸变化
   if (menuRef.value) {
     resizeObserver = new ResizeObserver(() => updateIndicator())
     resizeObserver.observe(menuRef.value)
   }
 
-  // 滚动联动: 检测当前 section
   intersectionObserver = new IntersectionObserver(
     () => {
       if (isClickScrolling) return
-      // 用 scrollY 算当前 section
       const scrollY = window.scrollY + window.innerHeight * 0.35
-      // 找出 scrollY 所在 section
       let currentId: 'home' | 'features' | 'about' = 'home'
       for (const id of navOrder) {
         const el = document.getElementById(id)
@@ -124,12 +130,9 @@ onMounted(() => {
         updateIndicator()
       }
     },
-    {
-      threshold: [0, 0.25, 0.5, 0.75, 1],
-    },
+    { threshold: [0, 0.25, 0.5, 0.75, 1] },
   )
 
-  // 观察所有 section
   for (const id of navOrder) {
     const el = document.getElementById(id)
     if (el) intersectionObserver.observe(el)
@@ -139,14 +142,16 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', onScroll)
   window.removeEventListener('resize', onResize)
+  document.removeEventListener('keydown', onKeydown)
   if (clickScrollTimer) window.clearTimeout(clickScrollTimer)
   resizeObserver?.disconnect()
   intersectionObserver?.disconnect()
+  document.body.style.overflow = ''
 })
 </script>
 
 <template>
-  <header class="nav" :class="{ 'nav--scrolled': scrolled }">
+  <header class="nav" :class="{ 'nav--scrolled': scrolled, 'nav--open': mobileOpen }">
     <div class="nav__inner container">
       <a class="nav__brand" href="#top" @click.prevent="setActiveAndScroll('top')">
         <span class="nav__brand-cn">探画</span>
@@ -167,24 +172,49 @@ onBeforeUnmount(() => {
         <span ref="indicatorRef" class="nav__indicator" aria-hidden="true"></span>
       </nav>
 
-      <button
-        class="nav__lang"
-        :aria-label="`Switch to ${locale.code === 'zh' ? 'English' : '中文'}`"
-        @click="locale.toggle()"
-      >
-        <span :class="{ 'is-active': locale.code === 'zh' }">中</span>
-        <span class="nav__lang-sep">/</span>
-        <span :class="{ 'is-active': locale.code === 'en' }">EN</span>
-      </button>
+      <div class="nav__right">
+        <button
+          class="nav__lang"
+          :aria-label="`Switch to ${locale.code === 'zh' ? 'English' : '中文'}`"
+          @click="locale.toggle()"
+        >
+          <span :class="{ 'is-active': locale.code === 'zh' }">中</span>
+          <span class="nav__lang-sep">/</span>
+          <span :class="{ 'is-active': locale.code === 'en' }">EN</span>
+        </button>
 
-      <button class="nav__burger" aria-label="Menu">
-        <Icon :size="22">
-          <line x1="4" y1="7" x2="20" y2="7" />
-          <line x1="4" y1="12" x2="20" y2="12" />
-          <line x1="4" y1="17" x2="20" y2="17" />
-        </Icon>
-      </button>
+        <button
+          class="nav__burger"
+          :aria-label="mobileOpen ? 'Close menu' : 'Open menu'"
+          :aria-expanded="mobileOpen"
+          @click="mobileOpen = !mobileOpen"
+        >
+          <span class="nav__burger-icon" :class="{ 'is-open': mobileOpen }" aria-hidden="true">
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+      </div>
     </div>
+
+    <!-- 移动菜单 (全屏抽屉) -->
+    <Transition name="drawer">
+      <div v-if="mobileOpen" class="nav__drawer" @click.self="closeMobile">
+        <nav class="nav__drawer-menu" aria-label="Mobile">
+          <a
+            v-for="(label, key) in t"
+            :key="key"
+            :href="`#${key}`"
+            class="nav__drawer-link"
+            :class="{ 'nav__drawer-link--active': active === key }"
+            @click.prevent="setActiveAndScroll(key)"
+          >
+            <span class="nav__drawer-link-text">{{ label }}</span>
+            <span class="nav__drawer-link-num">{{ String(navOrder.indexOf(key as any) + 1).padStart(2, '0') }}</span>
+          </a>
+        </nav>
+      </div>
+    </Transition>
   </header>
 </template>
 
@@ -202,10 +232,14 @@ onBeforeUnmount(() => {
   align-items: center;
   transition: background 0.4s $ease-out, backdrop-filter 0.4s $ease-out, box-shadow 0.4s $ease-out;
 
-  &--scrolled {
-    background: rgba(245, 241, 234, 0.82);
+  &--scrolled,
+  &--open {
+    background: rgba(245, 241, 234, 0.92);
     backdrop-filter: saturate(160%) blur(16px);
     -webkit-backdrop-filter: saturate(160%) blur(16px);
+  }
+
+  &--scrolled {
     box-shadow: 0 1px 0 rgba(26, 23, 20, 0.04);
   }
 
@@ -214,6 +248,13 @@ onBeforeUnmount(() => {
     align-items: center;
     width: 100%;
     gap: $sp-8;
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: $sp-3;
+    margin-left: auto;
   }
 
   &__brand {
@@ -245,7 +286,7 @@ onBeforeUnmount(() => {
     align-items: center;
     gap: $sp-10;
     margin: 0 auto 0 $sp-12;
-    padding-bottom: 4px; // 给 indicator 留出 baseline 下方空间
+    padding-bottom: 4px;
 
     @media (max-width: $bp-md) {
       display: none;
@@ -260,6 +301,9 @@ onBeforeUnmount(() => {
     line-height: 1;
     cursor: pointer;
     transition: color 0.3s $ease-out;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
 
     &:hover {
       color: $color-ink;
@@ -270,7 +314,6 @@ onBeforeUnmount(() => {
     }
   }
 
-  // 单一 indicator 元素, 跟随 active 平滑滑动
   &__indicator {
     position: absolute;
     left: 0;
@@ -279,9 +322,7 @@ onBeforeUnmount(() => {
     width: 0;
     background: $color-ink;
     transform: translateX(0);
-    transition:
-      transform 0.45s $ease-out,
-      width 0.45s $ease-out;
+    transition: transform 0.45s $ease-out, width 0.45s $ease-out;
     pointer-events: none;
     will-change: transform, width;
   }
@@ -294,9 +335,12 @@ onBeforeUnmount(() => {
     font-size: $fs-xs;
     letter-spacing: $ls-wide;
     color: $color-ink-muted;
-    margin-left: auto;
     cursor: pointer;
     transition: color 0.3s $ease-out;
+    min-height: 44px;
+    min-width: 44px;
+    justify-content: center;
+    padding: 0 4px;
 
     &:hover {
       color: $color-ink;
@@ -313,17 +357,114 @@ onBeforeUnmount(() => {
   }
 
   &__burger {
-    display: none;
-    margin-left: $sp-3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    color: $color-ink;
+    position: relative;
 
-    @media (max-width: $bp-md) {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      color: $color-ink;
+    @media (min-width: $bp-md + 1) {
+      display: none;
     }
   }
+
+  &__burger-icon {
+    position: relative;
+    width: 22px;
+    height: 14px;
+    display: block;
+
+    span {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 1.5px;
+      background: currentColor;
+      border-radius: 2px;
+      transition: transform 0.35s $ease-out, top 0.35s $ease-out, opacity 0.2s $ease-out;
+
+      &:nth-child(1) { top: 0; }
+      &:nth-child(2) { top: 50%; transform: translateY(-50%); }
+    }
+
+    &.is-open span {
+      &:nth-child(1) {
+        top: 50%;
+        transform: translateY(-50%) rotate(45deg);
+      }
+      &:nth-child(2) {
+        top: 50%;
+        transform: translateY(-50%) rotate(-45deg);
+      }
+    }
+  }
+
+  // === 移动抽屉菜单 ==========================================
+  &__drawer {
+    position: fixed;
+    top: $nav-height;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: $color-bg;
+    z-index: 99;
+    display: flex;
+    flex-direction: column;
+    padding: $sp-12 $sp-8;
+    overflow-y: auto;
+  }
+
+  &__drawer-menu {
+    display: flex;
+    flex-direction: column;
+    gap: $sp-1;
+  }
+
+  &__drawer-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $sp-5 $sp-3;
+    font-family: $font-serif;
+    font-size: 32px;
+    font-weight: $fw-medium;
+    color: $color-ink-soft;
+    border-bottom: 1px solid $color-line;
+    min-height: 64px;
+    transition: color 0.3s $ease-out, padding-left 0.3s $ease-out;
+
+    &-text {
+      line-height: 1;
+    }
+
+    &-num {
+      font-family: $font-mono;
+      font-size: $fs-xs;
+      letter-spacing: $ls-wider;
+      color: $color-ink-muted;
+    }
+
+    &--active {
+      color: $color-ink;
+      padding-left: $sp-5;
+    }
+
+    &:active {
+      background: rgba(26, 23, 20, 0.03);
+    }
+  }
+}
+
+// 抽屉 transition
+.drawer-enter-active,
+.drawer-leave-active {
+  transition: opacity 0.3s $ease-out, transform 0.35s $ease-out;
+}
+.drawer-enter-from,
+.drawer-leave-to {
+  opacity: 0;
+  transform: translateY(-12px);
 }
 </style>

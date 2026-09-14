@@ -107,7 +107,7 @@ onMounted(() => {
 
   &__title {
     font-family: $font-serif;
-    font-size: clamp(36px, 4.6vw, 64px);
+    font-size: clamp(30px, 4.6vw, 64px);
     line-height: 1.1;
     letter-spacing: -0.02em;
     color: #FFFFFF;
@@ -138,6 +138,7 @@ onMounted(() => {
 
     @media (max-width: $bp-md) {
       justify-self: start;
+      max-width: 100%;
     }
   }
 

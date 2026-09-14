@@ -158,6 +158,14 @@ watch(
   min-width: 200px;
   max-width: 240px;
 
+  @media (max-width: $bp-sm) {
+    left: 16px !important;
+    right: 16px;
+    width: auto;
+    max-width: none;
+    min-width: 0;
+  }
+
   // 顶部小三角
   &__arrow {
     position: absolute;

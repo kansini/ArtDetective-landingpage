@@ -57,6 +57,8 @@ const t = computed(() => locale.messages.footer)
 
     @media (max-width: $bp-md) {
       gap: $sp-4 $sp-6;
+      flex-direction: column;
+      align-items: flex-start;
     }
   }
 
@@ -65,6 +67,10 @@ const t = computed(() => locale.messages.footer)
     flex-direction: column;
     line-height: 1;
     margin-right: auto;
+
+    @media (max-width: $bp-md) {
+      margin-right: 0;
+    }
 
     &-cn {
       font-family: $font-serif;
@@ -90,8 +96,7 @@ const t = computed(() => locale.messages.footer)
 
     @media (max-width: $bp-md) {
       margin: 0;
-      flex: 1 1 100%;
-      order: 5;
+      order: 3;
       gap: $sp-5;
     }
 
@@ -100,6 +105,9 @@ const t = computed(() => locale.messages.footer)
       color: $color-ink-soft;
       letter-spacing: $ls-wide;
       transition: color 0.3s $ease-out;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
 
       &:hover {
         color: $color-ink;
@@ -110,14 +118,18 @@ const t = computed(() => locale.messages.footer)
   &__social {
     display: flex;
     gap: $sp-3;
+
+    @media (max-width: $bp-md) {
+      order: 2;
+    }
   }
 
   &__icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     color: $color-ink-soft;
     transition: color 0.3s $ease-out, background 0.3s $ease-out;
@@ -138,8 +150,8 @@ const t = computed(() => locale.messages.footer)
 
     @media (max-width: $bp-md) {
       margin: 0;
-      flex: 1 1 100%;
-      order: 6;
+      order: 5;
+      white-space: normal;
     }
   }
 }

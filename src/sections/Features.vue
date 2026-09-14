@@ -318,11 +318,17 @@ onBeforeUnmount(() => {
   grid-template-columns: 1fr 1fr;
   gap: 0;
   background: $color-surface;
+  border: 1px solid $color-line;
   border-radius: $radius-lg;
   overflow: hidden;
   min-height: 280px;
   transform-style: preserve-3d;
   transition: transform 0.5s $ease-out, box-shadow 0.5s $ease-out, border-color 0.5s $ease-out;
+
+  @media (max-width: $bp-md) {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
 
   @media (max-width: $bp-sm) {
     min-height: 220px;
@@ -340,6 +346,11 @@ onBeforeUnmount(() => {
     flex-direction: column;
     gap: $sp-3;
     padding: $sp-6 $sp-5;
+
+    @media (max-width: $bp-md) {
+      padding: $sp-5 $sp-5 $sp-3;
+      order: 2;
+    }
     z-index: 1;
   }
 
@@ -429,6 +440,11 @@ onBeforeUnmount(() => {
     overflow: hidden;
     background: $color-bg-alt;
     will-change: transform;
+
+    @media (max-width: $bp-md) {
+      order: 1;
+      aspect-ratio: 16 / 9;
+    }
   }
 
   &__img {
