@@ -18,8 +18,8 @@ export const zh = {
       harmony: 'HarmonyOS 下载',
     },
     platformNote: {
-      ios: 'iPhone · iPad · iOS 17+',
-      harmony: 'HarmonyOS 4+',
+      ios: 'iPhone · iOS 26+',
+      harmony: 'HarmonyOS 6+',
     },
     sideLabel: ['DISCOVER', 'EXPLORE', 'ENJOY', 'ART'],
     pager: '01 / 04',
@@ -61,8 +61,8 @@ export const zh = {
     appStore: 'App Store 下载',
     harmony: 'HarmonyOS 下载',
     platformNote: {
-      ios: 'iPhone · iPad · iOS 17+',
-      harmony: 'HarmonyOS 4+',
+      ios: 'iPhone · iOS 26+',
+      harmony: 'HarmonyOS 6+',
     },
     caption: '开启你的艺术探索之旅',
   },
@@ -71,7 +71,7 @@ export const zh = {
   footer: {
     links: {
       privacy: '隐私政策',
-      terms: '服务条款',
+      // terms: '服务条款',
       contact: '联系我们',
     },
     copyright: '© 2026 探画. All rights reserved.',

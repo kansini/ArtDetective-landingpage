@@ -18,8 +18,8 @@ export const en: Locale = {
       harmony: 'Get on HarmonyOS',
     },
     platformNote: {
-      ios: 'iPhone · iPad · iOS 17+',
-      harmony: 'HarmonyOS 4+',
+      ios: 'iPhone · iOS 26+',
+      harmony: 'HarmonyOS 6+',
     },
     sideLabel: ['DISCOVER', 'EXPLORE', 'ENJOY', 'ART'],
     pager: '01 / 04',
@@ -57,8 +57,8 @@ export const en: Locale = {
     appStore: 'Download on App Store',
     harmony: 'Get on HarmonyOS',
     platformNote: {
-      ios: 'iPhone · iPad · iOS 17+',
-      harmony: 'HarmonyOS 4+',
+      ios: 'iPhone · iOS 26+',
+      harmony: 'HarmonyOS 6+',
     },
     caption: 'Start your journey of art',
   },
@@ -66,7 +66,7 @@ export const en: Locale = {
   footer: {
     links: {
       privacy: 'Privacy',
-      terms: 'Terms',
+      // terms: 'Terms',
       contact: 'Contact',
     },
     copyright: '© 2026 Art Detective. All rights reserved.',
