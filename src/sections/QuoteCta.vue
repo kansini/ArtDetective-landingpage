@@ -17,6 +17,8 @@ const { revealUp, revealStagger } = useGsapAnimations()
 
 const showApple = ref(false)
 const showHarmony = ref(false)
+const appleBtn = ref<HTMLElement | null>(null)
+const harmonyBtn = ref<HTMLElement | null>(null)
 
 onMounted(() => {
   revealUp(root.value!.querySelector('.quote-cta__quote'), {})
@@ -38,6 +40,7 @@ onMounted(() => {
       <div class="quote-cta__actions">
         <div class="quote-cta__btn-row">
           <button
+            ref="appleBtn"
             class="cta quote-cta__btn"
             type="button"
             data-qr-trigger
@@ -49,6 +52,7 @@ onMounted(() => {
             <span>{{ t.finalCta.appStore }}</span>
           </button>
           <button
+            ref="harmonyBtn"
             class="cta cta--ghost quote-cta__btn"
             type="button"
             data-qr-trigger
@@ -68,6 +72,7 @@ onMounted(() => {
             :title="t.finalCta.appStore"
             hint="使用 iPhone 相机扫描"
             align="start"
+            :anchor="appleBtn"
             @close="showApple = false"
           />
           <QrPopover
@@ -76,6 +81,7 @@ onMounted(() => {
             :title="t.finalCta.harmony"
             hint="使用 HarmonyOS 相机扫描"
             align="end"
+            :anchor="harmonyBtn"
             @close="showHarmony = false"
           />
         </div>

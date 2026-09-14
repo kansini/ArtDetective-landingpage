@@ -17,6 +17,8 @@ const t = computed(() => locale.messages.hero)
 
 const showApple = ref(false)
 const showHarmony = ref(false)
+const appleBtn = ref<HTMLElement | null>(null)
+const harmonyBtn = ref<HTMLElement | null>(null)
 
 let heroScrollTrigger: ScrollTrigger | null = null
 
@@ -91,6 +93,7 @@ onBeforeUnmount(() => {
 
         <div class="hero__cta-row">
           <button
+            ref="appleBtn"
             class="cta hero__cta"
             type="button"
             data-qr-trigger
@@ -105,6 +108,7 @@ onBeforeUnmount(() => {
           </button>
 
           <button
+            ref="harmonyBtn"
             class="cta cta--ghost hero__cta"
             type="button"
             data-qr-trigger
@@ -124,6 +128,7 @@ onBeforeUnmount(() => {
             :title="t.cta.appStore"
             hint="使用 iPhone 相机扫描"
             align="start"
+            :anchor="appleBtn"
             @close="showApple = false"
           />
           <QrPopover
@@ -132,6 +137,7 @@ onBeforeUnmount(() => {
             :title="t.cta.harmony"
             hint="使用 HarmonyOS 相机扫描"
             align="end"
+            :anchor="harmonyBtn"
             @close="showHarmony = false"
           />
         </div>

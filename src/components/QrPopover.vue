@@ -1,52 +1,86 @@
 <script setup lang="ts">
 /**
  * QR 二维码气泡
- * - 点击外部 / Esc 关闭
- * - 箭头对齐到 trigger
- * - GSAP 淡入 + 缩放
+ * - Teleport to body: 脱离父容器 stacking context, 永远在最上层
+ * - Fixed 定位 + 动态计算位置: 跟随 anchor 元素
+ * - 滚动时自动关闭: 避免 popover 飞出视口
+ * - Esc / 点击外部 / 滚动 / 关闭按钮 → emit('close')
  */
-import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, watch, onMounted, onBeforeUnmount, nextTick, type PropType } from 'vue'
 import { gsap } from 'gsap'
 
-const props = defineProps<{
-  open: boolean
-  qrSrc: string
-  title: string
-  hint?: string
-  align?: 'start' | 'center' | 'end'
-}>()
+const props = defineProps({
+  open: { type: Boolean, default: false },
+  qrSrc: { type: String, required: true },
+  title: { type: String, required: true },
+  hint: { type: String, default: '' },
+  align: { type: String, default: 'center' }, // 'start' | 'center' | 'end'
+  anchor: { type: Object as PropType<HTMLElement | null>, default: null },
+})
 
 const emit = defineEmits<{
   (e: 'close'): void
 }>()
 
 const panelRef = ref<HTMLElement | null>(null)
+const posStyle = ref<Record<string, string>>({ top: '0px', left: '0px', visibility: 'hidden' })
 
-function close() {
-  emit('close')
+function updatePosition() {
+  const anchor = props.anchor
+  const panel = panelRef.value
+  if (!anchor || !panel) return
+
+  const rect = anchor.getBoundingClientRect()
+  const panelRect = panel.getBoundingClientRect()
+  const vw = window.innerWidth
+  const margin = 8
+
+  let left: number
+  if (props.align === 'start') {
+    left = rect.left
+  } else if (props.align === 'end') {
+    left = rect.right - panelRect.width
+  } else {
+    left = rect.left + rect.width / 2 - panelRect.width / 2
+  }
+  // 防止水平溢出
+  if (left < margin) left = margin
+  if (left + panelRect.width > vw - margin) left = vw - panelRect.width - margin
+
+  const top = rect.bottom + 14
+  posStyle.value = {
+    top: `${top}px`,
+    left: `${left}px`,
+    visibility: 'visible',
+  }
 }
 
 function onKeydown(e: KeyboardEvent) {
-  if (e.key === 'Escape' && props.open) close()
+  if (e.key === 'Escape' && props.open) emit('close')
 }
-
+function onScrollOrResize() {
+  if (props.open) emit('close')
+}
 function onDocClick(e: MouseEvent) {
   if (!props.open) return
   const target = e.target as HTMLElement | null
   if (!target) return
-  // 点击 trigger 或 popover 自身不算"外部"
   if (target.closest('[data-qr-trigger]')) return
   if (target.closest('[data-qr-popover]')) return
-  close()
+  emit('close')
 }
 
 onMounted(() => {
   document.addEventListener('keydown', onKeydown)
   document.addEventListener('click', onDocClick)
+  window.addEventListener('scroll', onScrollOrResize, { passive: true })
+  window.addEventListener('resize', onScrollOrResize)
 })
 onBeforeUnmount(() => {
   document.removeEventListener('keydown', onKeydown)
   document.removeEventListener('click', onDocClick)
+  window.removeEventListener('scroll', onScrollOrResize)
+  window.removeEventListener('resize', onScrollOrResize)
 })
 
 watch(
@@ -56,12 +90,22 @@ watch(
     const el = panelRef.value
     if (!el) return
     if (open) {
-      gsap.killTweensOf(el)
-      gsap.fromTo(
-        el,
-        { autoAlpha: 0, y: -8, scale: 0.94, transformOrigin: 'top center' },
-        { autoAlpha: 1, y: 0, scale: 1, duration: 0.3, ease: 'power3.out' },
-      )
+      // 先定位到不可见避免闪烁
+      posStyle.value = { ...posStyle.value, visibility: 'hidden' }
+      // 等浏览器布局完 (锚点位置 + panel 自身尺寸)
+      requestAnimationFrame(() => {
+        updatePosition()
+        // 字体可能异步加载, 再补一次
+        requestAnimationFrame(() => {
+          updatePosition()
+          gsap.killTweensOf(el)
+          gsap.fromTo(
+            el,
+            { autoAlpha: 0, y: -8, scale: 0.94, transformOrigin: 'top center' },
+            { autoAlpha: 1, y: 0, scale: 1, duration: 0.3, ease: 'power3.out' },
+          )
+        })
+      })
     } else {
       gsap.to(el, {
         autoAlpha: 0,
@@ -76,12 +120,13 @@ watch(
 </script>
 
 <template>
-  <Transition name="qr-fade">
+  <Teleport to="body">
     <div
       v-if="open"
       ref="panelRef"
       class="qr-popover"
-      :class="`qr-popover--${align ?? 'center'}`"
+      :class="`qr-popover--${align}`"
+      :style="posStyle"
       data-qr-popover
       role="dialog"
       aria-modal="false"
@@ -96,16 +141,15 @@ watch(
         <p v-if="hint" class="qr-popover__hint">{{ hint }}</p>
       </div>
     </div>
-  </Transition>
+  </Teleport>
 </template>
 
 <style lang="scss" scoped>
 @use '../styles/tokens' as *;
 
 .qr-popover {
-  position: absolute;
-  top: calc(100% + 14px);
-  z-index: 90;
+  position: fixed;
+  z-index: 9999;
   background: $color-surface;
   border: 1px solid $color-line;
   border-radius: $radius-md;
@@ -113,18 +157,6 @@ watch(
   padding: $sp-4;
   min-width: 200px;
   max-width: 240px;
-
-  // alignment
-  &--center {
-    left: 50%;
-    transform: translateX(-50%) translateY(0);
-  }
-  &--start {
-    left: 0;
-  }
-  &--end {
-    right: 0;
-  }
 
   // 顶部小三角
   &__arrow {
@@ -155,27 +187,6 @@ watch(
     flex-direction: column;
     align-items: center;
     gap: $sp-2;
-  }
-
-  &__close {
-    position: absolute;
-    top: -4px;
-    right: -4px;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: $color-ink-muted;
-    background: $color-bg-alt;
-    transition: color 0.2s $ease-out, background 0.2s $ease-out;
-    z-index: 1;
-
-    &:hover {
-      color: $color-ink;
-      background: $color-line;
-    }
   }
 
   &__img-wrap {
@@ -212,11 +223,5 @@ watch(
     text-align: center;
     margin: 0;
   }
-}
-
-// Vue Transition (兜底, GSAP 才是主动画)
-.qr-fade-enter-active,
-.qr-fade-leave-active {
-  transition: none; // 让 GSAP 控制
 }
 </style>
